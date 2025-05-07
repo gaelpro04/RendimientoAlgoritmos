@@ -1,72 +1,195 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.util.Locale;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.jfree.chart.*;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.xy.*;
 
 public class RendimientoAlgoritmos {
 
    private Ordenamientos algoritmos;
    private LecturaArchivos csv;
    private JFreeChart graficas;
+   private Object[][] datos;
 
    private JFrame frame;
-   private JPanel panelTabla, panelBotones, panelInformacion, panelIzquierdo;
-   private JComboBox<String> comboBoxAlgoritmos;
+   private JPanel panelTabla, panelBotones, panelInformacion, panelDerecho;
+   private JComboBox<String> comboBoxAlgoritmos, comboBoxColumna;
    private JButton botonOrdenar;
-   private JLabel labelInformacion, labelEncabezado;
+   private JLabel labelInformacion, labelEncabezado, labelColumna;
+   private JTable tablaDatos;
 
    public RendimientoAlgoritmos()
    {
+      csv = new LecturaArchivos();
+      csv.leer("C:\\Users\\sgsg_\\IdeaProjects\\RendimientoAlgoritmos\\archive\\weatherHistory.csv");
+      String[] encabezados = csv.regresarFilaString(0);
+
+
       frame = new JFrame("Prueba de algoritmos");
       frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
       frame.setLayout(new BorderLayout());
 
       panelTabla = new JPanel();
-      panelTabla.setBackground(Color.GREEN);
-      panelTabla.setPreferredSize(new Dimension(1100, 750));
+      panelTabla.setPreferredSize(new Dimension(1200, 750));
+      panelTabla.setLayout(new BorderLayout());
 
-      panelIzquierdo = new JPanel();
-      panelIzquierdo.setBackground(Color.RED);
-      panelIzquierdo.setPreferredSize(new Dimension(300, 750));
-      panelIzquierdo.setLayout(new BorderLayout());
+      datos = new Object[csv.regresar().size() - 1][];
+      for (int i = 1; i < csv.regresar().size(); i++) {
+         datos[i - 1] = csv.regresarFila(i);
+
+      }
+
+      DefaultTableModel modelo = new DefaultTableModel(datos, encabezados) {
+         @Override
+         public boolean isCellEditable(int row, int column) {
+            return false; // Ninguna celda editable
+         }
+      };
+
+      tablaDatos = new JTable(modelo);
+      tablaDatos.setRowHeight(20);
+      tablaDatos.setEnabled(false);
+
+      DefaultTableCellRenderer centrado = new DefaultTableCellRenderer();
+      centrado.setHorizontalAlignment(SwingConstants.CENTER);
+
+      for (int i = 0; i < tablaDatos.getColumnCount(); i++) {
+         tablaDatos.getColumnModel().getColumn(i).setPreferredWidth(250);
+         tablaDatos.getColumnModel().getColumn(i).setCellRenderer(centrado);
+      }
+
+
+
+
+
+      panelDerecho = new JPanel();
+      panelDerecho.setBackground(Color.RED);
+      panelDerecho.setPreferredSize(new Dimension(300, 750));
+      panelDerecho.setLayout(new BorderLayout());
 
       panelBotones = new JPanel();
-      panelBotones.setBackground(Color.BLUE);
       panelBotones.setPreferredSize(new Dimension(300,375));
-      panelBotones.setLayout(new GridBagLayout());
+      panelBotones.setLayout(null);
+      panelBotones.setBorder(BorderFactory.createLineBorder(Color.GRAY, 5));
 
-      GridBagConstraints gbc = new GridBagConstraints();
+
 
       botonOrdenar = new JButton("Ordenar");
       botonOrdenar.addActionListener(action -> botonOrdenar());
-      botonOrdenar.setPreferredSize(new Dimension(40,100));
+      botonOrdenar.setBounds(150, 25,90,25);
+      botonOrdenar.setFocusPainted(false);
 
       String[] elementos = {"quickSort", "mergeSort", "shellSort", "seleccion", "radixSort", "sort", "parallelSort"};
       comboBoxAlgoritmos = new JComboBox<>(elementos);
+      comboBoxAlgoritmos.setBounds(50,25,90,25);
+      comboBoxAlgoritmos.setFocusable(false);
 
-      panelBotones.add(botonOrdenar);
+      labelColumna = new JLabel("Selecciona la columna");
+      labelColumna.setBounds(67,55,192,25);
+      labelColumna.setFont(new Font("Arial", Font.BOLD, 14));
+
+      comboBoxColumna = new JComboBox<>(encabezados);
+      comboBoxColumna.setBounds(50,80,192,25);
+      comboBoxColumna.setFocusable(false);
+
+
+      panelTabla.add(new JScrollPane(tablaDatos), BorderLayout.CENTER);
+
       panelBotones.add(comboBoxAlgoritmos);
+      panelBotones.add(botonOrdenar);
+      panelBotones.add(labelColumna);
+      panelBotones.add(comboBoxColumna);
 
       panelInformacion = new JPanel();
-      panelInformacion.setBackground(Color.YELLOW);
+      panelInformacion.setBackground(Color.WHITE);
       panelInformacion.setPreferredSize(new Dimension(300,350));
+      panelInformacion.setLayout(new BorderLayout());
+      panelInformacion.setBorder(BorderFactory.createLineBorder(Color.GRAY,5));
+
+      labelEncabezado = new JLabel("Datos algoritmo", SwingConstants.CENTER);
+      labelEncabezado.setFont(new Font("Arial", Font.BOLD,16));
+      labelEncabezado.setOpaque(true);
+
+      panelInformacion.add(labelEncabezado, BorderLayout.NORTH);
 
 
-      panelIzquierdo.add(panelInformacion, BorderLayout.NORTH);
-      panelIzquierdo.add(panelBotones, BorderLayout.SOUTH);
+      panelDerecho.add(panelInformacion, BorderLayout.NORTH);
+      panelDerecho.add(panelBotones, BorderLayout.SOUTH);
 
       frame.add(panelTabla, BorderLayout.CENTER);
-      frame.add(panelIzquierdo, BorderLayout.EAST);
+      frame.add(panelDerecho, BorderLayout.EAST);
 
-      frame.setSize(1400,750);
+      frame.setSize(1500,750);
       frame.setLocationRelativeTo(null);
       frame.setVisible(true);
    }
 
    private void botonOrdenar()
    {
+      String algoritmo = comboBoxAlgoritmos.getActionCommand();
+      String columna = comboBoxColumna.getActionCommand();
 
+      String[] encabezados = csv.regresarFilaString(0);
+      ArrayList<Object> encebzadosArray = new ArrayList<>(encabezados.length);
+      encebzadosArray.addAll(Arrays.asList(encabezados));
+
+      String[] elementos = {"quickSort", "mergeSort", "shellSort", "seleccion", "radixSort", "sort", "parallelSort"};
+      long startTime;
+      long endTime;
+
+      switch (algoritmo) {
+         case "quickSort":
+            startTime = System.nanoTime();
+
+
+
+
+
+            endTime = System.nanoTime();
+            break;
+         case "mergeSort":
+            break;
+         case "shellSort":
+            break;
+         case "seleccion":
+            break;
+         case "radixSort":
+            break;
+         case "sort":
+            break;
+         case "parallelSort":
+            break;
+      }
+      desbloqueoGraficas();
+   }
+
+   private void desbloqueoGraficas()
+   {
+      JLabel labelGraficado = new JLabel("Mostrar grafica");
+      labelGraficado.setFont(new Font("Arial", Font.BOLD, 14));
+      labelGraficado.setBounds(90,105,192,25);
+
+      String[] encabezados = csv.regresarFilaString(0);
+      JComboBox comboBoxGraficas = new JComboBox<>(encabezados);
+      comboBoxGraficas.setBounds(50,130,192,25);
+      comboBoxGraficas.setFocusable(false);
+
+      panelBotones.add(labelGraficado);
+      panelBotones.add(comboBoxGraficas);
+      panelBotones.repaint();
+      panelBotones.revalidate();
+   }
+
+   private void ordenarColumnas(String columna)
+   {
+
+   }
+
+   private Object obtenerColumna(String columna)
+   {
+      return null;
    }
 }

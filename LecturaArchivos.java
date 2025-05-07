@@ -168,4 +168,10 @@ public class LecturaArchivos {
         return null;
     }
 
+    public String[] regresarFilaString(int indice)
+    {
+        Object[] objectos = regresarFila(indice);
+        return Arrays.copyOf(objectos, objectos.length, String[].class);
+    }
+
 }
