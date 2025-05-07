@@ -14,7 +14,7 @@ import java.util.Map;
 public class LecturaArchivos {
 
     //Atributo que almacenara todo el contenido del archivo csv
-    private ArrayList<HashMap<Integer, Object>> filas;
+    private ArrayList<Object[]> filas;
     private long lineas;
     private Arrays array;
 
@@ -45,16 +45,10 @@ public class LecturaArchivos {
             while ((linea = read.readLine()) != null) {
 
                 //Se separa el contenido almacenado con comas
-                String[] contenido = linea.split(",");
+                Object[] contenido = linea.split(",");
 
                 //Se agrega un HashMap donde se guardar el contenido
-                filas.add(new HashMap<>());
-
-                //Se guarda todo el contenido
-                for (int i = 0; i < contenido.length; i++) {
-
-                    filas.getLast().put(i, contenido[i]);
-                }
+                filas.add(contenido);
                 ++lineas;
             }
 
@@ -73,8 +67,9 @@ public class LecturaArchivos {
     {
         long contador = 0;
         if (!filas.isEmpty()) {
-            for (HashMap<Integer, Object> fila : filas) {
-                for (Object values : fila.values()) {
+            for (Object[] objects : filas) {
+                for (int i = 0; i < objects.length; ++i) {
+                    Object values = objects[i];
                     System.out.print(values + ", ");
 
                 }
@@ -92,13 +87,14 @@ public class LecturaArchivos {
     public void mostrarFila(int indice)
     {
         long contador = 0;
-        HashMap<Integer, Object> fila = filas.get(indice);
-        if (!fila.isEmpty()) {
-            for (Object value : fila.values()) {
+        Object[] fila = filas.get(indice);
+        if (fila.length != 0) {
+            for (Object value : fila) {
                 System.out.print(value + ", ");
             }
             ++contador;
         }
+        System.out.println();
         System.out.println("Filas obtenidas: " + contador + " Filas reales : " + lineas);
     }
 
@@ -110,10 +106,13 @@ public class LecturaArchivos {
     {
         long contador = 0;
         if (!filas.isEmpty()) {
-            for (HashMap<Integer, Object> fila : filas) {
-                if (fila.containsKey(indice)) {
-                    System.out.println(fila.get(indice));
-                    ++contador;
+            for (Object[] fila : filas) {
+                for (int i = 0; i < fila.length; ++i) {
+                    if (indice == i) {
+                        System.out.println(fila[i]);
+                        ++contador;
+                        break;
+                    }
                 }
             }
         }
@@ -124,7 +123,7 @@ public class LecturaArchivos {
      * Metodo que regresa todo el contenido del archivo csv
      * @return
      */
-    public ArrayList<HashMap<Integer, Object>> regresar()
+    public ArrayList<Object[]> regresar()
     {
         if (!filas.isEmpty()) {
             return filas;
@@ -137,7 +136,7 @@ public class LecturaArchivos {
      * Metodo que regresa todo el contenido de una fila del archivo csv
      * @return
      */
-    public HashMap<Integer, Object> regresarFila(int indice)
+    public Object[] regresarFila(int indice)
     {
         return filas.get(indice);
     }
@@ -147,11 +146,26 @@ public class LecturaArchivos {
      * @param indice
      * @return
      */
-    public ArrayList<Object> regresarColumna(int indice)
+    public Object[] regresarColumna(int indice)
     {
-        ArrayList<Object> columna = null;
-        
-        return columna;
+        if (!filas.isEmpty()) {
+            int contador = 0;
+            Object[] columna = new Object[filas.size()];
+
+            for (Object[] fila : filas) {
+                for (int i = 0; i < fila.length; ++i) {
+                    if (indice == i) {
+                        columna[contador] = fila[i];
+                        ++contador;
+                        break;
+                    }
+                }
+            }
+
+            return columna;
+        }
+
+        return null;
     }
 
 }
