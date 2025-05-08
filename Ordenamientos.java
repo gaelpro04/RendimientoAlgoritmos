@@ -1,454 +1,725 @@
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.lang.reflect.Array;
+import java.util.*;
+import java.util.List;
 
 //Clase que contiene dinstintos metodos de ordenamiento
 public class Ordenamientos {
 
-    public void quickSort(double[] a, int[] indices, int n)
+    public void quickSort(double[] a, int[] indices, int n, String ord)
     {
         --n;
-        recursivo(0,n,a, indices);
+        recursivo(0,n,a, indices, ord);
     }
 
-    private void recursivo(int inicio, int fin, double[] a, int[] indices) {
-        int izq = inicio;
-        int der = fin;
-        int pos = inicio;
-        boolean bandera = true;
+    private void recursivo(int inicio, int fin, double[] a, int[] indices, String ord) {
 
-        while (bandera) {
-            bandera = false;
-            // usar compareTo en lugar de <=
-            while ((a[pos] <= a[der]) && pos != der) {
-                --der;
-            }
-
-            if (pos != der) {
-                double aux = a[pos];
-                a[pos] = a[der];
-                a[der] = aux;
-
-                int auxDouble = indices[pos];
-                indices[pos] = indices[der];
-                indices[der] = auxDouble;
-
-                pos = der;
-
-                // usar compareTo en lugar de >=
-                while ((a[pos] >= a[izq]) && pos != izq) {
-                    ++izq;
-                }
-
-                if (pos != izq) {
-                    aux = a[pos];
-                    a[pos] = a[izq];
-                    a[izq] = aux;
-
-                    auxDouble = indices[pos];
-                    indices[pos] = indices[izq];
-                    indices[izq] = auxDouble;
-
-                    pos = izq;
-                    bandera = true;
-                }
-            }
-        }
-
-        if ((pos - 1) > inicio) {
-            recursivo(inicio, pos - 1, a, indices);
-        }
-        if (fin > (pos + 1)) {
-            recursivo(pos + 1, fin, a, indices);
-        }
-    }
-
-    public void seleccion(double[] a, int n)
-    {
-        for (int i = 0; i < n-1; i++) {
-            double menor = a[i];
-            int k = i;
-            for (int j = i+1; j < n; j++) {
-                if (a[i] < menor) {
-                    menor = a[j];
-                    k = j;
-                }
-            }
-            a[k] = a[i];
-            a[i] = menor;
-        }
-    }
-
-    public void shell(double[] a, int n)
-    {
-        int inter = n;
-        while (inter > 1) {
-            inter = inter / 2;
+        if (ord.equals("Ascendente")) {
+            int izq = inicio;
+            int der = fin;
+            int pos = inicio;
             boolean bandera = true;
+
             while (bandera) {
                 bandera = false;
-                int i = 0;
-                while ((i + inter) < n) {
+                // usar compareTo en lugar de <=
+                while ((a[pos] <= a[der]) && pos != der) {
+                    --der;
+                }
 
-                    if (a[i] > a[i + inter]) {
-                        double aux = a[i];
-                        a[i] = a[i + inter];
-                        a[i + inter] = aux;
+                if (pos != der) {
+                    double aux = a[pos];
+                    a[pos] = a[der];
+                    a[der] = aux;
+
+                    int auxDouble = indices[pos];
+                    indices[pos] = indices[der];
+                    indices[der] = auxDouble;
+
+                    pos = der;
+
+                    // usar compareTo en lugar de >=
+                    while ((a[pos] >= a[izq]) && pos != izq) {
+                        ++izq;
+                    }
+
+                    if (pos != izq) {
+                        aux = a[pos];
+                        a[pos] = a[izq];
+                        a[izq] = aux;
+
+                        auxDouble = indices[pos];
+                        indices[pos] = indices[izq];
+                        indices[izq] = auxDouble;
+
+                        pos = izq;
                         bandera = true;
                     }
-                    ++i;
+                }
+            }
+
+            if ((pos - 1) > inicio) {
+                recursivo(inicio, pos - 1, a, indices, ord);
+            }
+            if (fin > (pos + 1)) {
+                recursivo(pos + 1, fin, a, indices, ord);
+            }
+        } else {
+            int izq = inicio;
+            int der = fin;
+            int pos = inicio;
+            boolean bandera = true;
+
+            while (bandera) {
+                bandera = false;
+                while ((a[pos] >= a[der]) && pos != der) {
+                    --der;
+                }
+
+                if (pos != der) {
+                    double aux = a[pos];
+                    a[pos] = a[der];
+                    a[der] = aux;
+
+                    int auxDouble = indices[pos];
+                    indices[pos] = indices[der];
+                    indices[der] = auxDouble;
+
+                    pos = der;
+
+                    while ((a[pos] <= a[izq]) && pos != izq) {
+                        ++izq;
+                    }
+
+                    if (pos != izq) {
+                        aux = a[pos];
+                        a[pos] = a[izq];
+                        a[izq] = aux;
+
+                        auxDouble = indices[pos];
+                        indices[pos] = indices[izq];
+                        indices[izq] = auxDouble;
+
+                        pos = izq;
+                        bandera = true;
+                    }
+                }
+            }
+
+            if ((pos - 1) > inicio) {
+                recursivo(inicio, pos - 1, a, indices, ord);
+            }
+            if (fin > (pos + 1)) {
+                recursivo(pos + 1, fin, a, indices, ord);
+            }
+        }
+
+    }
+
+    public void seleccion(double[] a, int[] indices, int n, String ord) {
+        if (ord.equals("Ascendente")) {
+            for (int i = 0; i < n - 1; i++) {
+                int k = i;
+                for (int j = i + 1; j < n; j++) {
+                    if (a[j] < a[k]) {
+                        k = j;
+                    }
+                }
+
+                double tempA = a[i];
+                a[i] = a[k];
+                a[k] = tempA;
+
+                int tempIndex = indices[i];
+                indices[i] = indices[k];
+                indices[k] = tempIndex;
+            }
+        } else {
+            for (int i = 0; i < n - 1; i++) {
+                int k = i;
+                for (int j = i + 1; j < n; j++) {
+                    if (a[j] > a[k]) {
+                        k = j;
+                    }
+                }
+                double tempA = a[i];
+                a[i] = a[k];
+                a[k] = tempA;
+
+                int tempIndex = indices[i];
+                indices[i] = indices[k];
+                indices[k] = tempIndex;
+            }
+        }
+    }
+
+    public void shell(double[] a, int[] indices, int n, String ord)
+    {
+        if (ord.equals("Ascendente")) {
+            int inter = n;
+            while (inter > 1) {
+                inter = inter / 2;
+                boolean bandera = true;
+                while (bandera) {
+                    bandera = false;
+                    int i = 0;
+                    while ((i + inter) < n) {
+
+                        if (a[i] > a[i + inter]) {
+                            double aux = a[i];
+                            a[i] = a[i + inter];
+                            a[i + inter] = aux;
+
+                            int auxIndice = indices[i];
+                            indices[i] = indices[i + inter];
+                            indices[i + inter] = auxIndice;
+
+                            bandera = true;
+                        }
+                        ++i;
+                    }
+                }
+            }
+        } else {
+            int inter = n;
+            while (inter > 1) {
+                inter = inter / 2;
+                boolean bandera = true;
+                while (bandera) {
+                    bandera = false;
+                    int i = 0;
+                    while ((i + inter) < n) {
+
+                        if (a[i] < a[i + inter]) {
+                            double aux = a[i];
+                            a[i] = a[i + inter];
+                            a[i + inter] = aux;
+
+                            int auxIndice = indices[i];
+                            indices[i] = indices[i + inter];
+                            indices[i + inter] = auxIndice;
+
+                            bandera = true;
+                        }
+                        ++i;
+                    }
                 }
             }
         }
+
     }
 
-    public void radixSort(double[] arr) {
-        // Encuentra el valor máximo en el array
-        double max = Arrays.stream(arr).max().getAsDouble();
-
-        // Trabajamos con la parte entera del número, asegurándonos de que sea positivo
-        int decimalPlaces = getMaxDecimalPlaces(arr);
-
-        // Multiplicamos por 10^decimalPlaces para eliminar los decimales
-        int factor = (int) Math.pow(10, decimalPlaces);
-
-        // Primero, aplicamos Radix Sort sobre los enteros
-        int maxInt = (int) (max * factor); // Obtenemos el máximo valor ajustado por el factor
-        for (int exp = 1; maxInt / exp > 0; exp *= 10) {
-            countingSortByDigit(arr, exp, factor);
-        }
-    }
-
-    // Método auxiliar para contar los dígitos y ordenar
-    private void countingSortByDigit(double[] arr, int exp, int factor) {
+    public void radixSort(double[] arr, int[] indices, String ord) {
         int n = arr.length;
-        double[] output = new double[n];
-        int[] count = new int[10];
+        int decimalPlaces = 9;
+        long factor = (long) Math.pow(10, decimalPlaces);
 
-        // Calculamos el índice de cada número en el array de acuerdo al dígito en la posición exp
+        long[] scaled = new long[n];
         for (int i = 0; i < n; i++) {
-            int index = (int) ((arr[i] * factor) / exp) % 10;
-            count[index]++;
+            scaled[i] = (long) Math.round(arr[i] * factor);
+            indices[i] = i;
         }
 
-        // Calculamos las posiciones acumuladas
-        for (int i = 1; i < 10; i++) {
-            count[i] += count[i - 1];
-        }
+        // Separar negativos y positivos
+        List<Long> neg = new ArrayList<>();
+        List<Integer> negIdx = new ArrayList<>();
+        List<Long> pos = new ArrayList<>();
+        List<Integer> posIdx = new ArrayList<>();
 
-        // Construimos el array de salida (output) con los elementos ordenados
-        for (int i = n - 1; i >= 0; i--) {
-            int index = (int) ((arr[i] * factor) / exp) % 10;
-            output[count[index] - 1] = arr[i];
-            count[index]--;
-        }
-
-        // Copiamos el array de salida de vuelta al original
-        System.arraycopy(output, 0, arr, 0, n);
-    }
-
-    // Método para obtener la cantidad máxima de decimales en los números del array
-    private static int getMaxDecimalPlaces(double[] arr) {
-        int maxDecimals = 0;
-        for (double num : arr) {
-            String[] parts = String.valueOf(num).split("\\.");
-            if (parts.length > 1) {
-                maxDecimals = Math.max(maxDecimals, parts[1].length());
+        for (int i = 0; i < n; i++) {
+            if (scaled[i] < 0) {
+                neg.add(-scaled[i]); // Negativos se hacen positivos para ordenar
+                negIdx.add(indices[i]);
+            } else {
+                pos.add(scaled[i]);
+                posIdx.add(indices[i]);
             }
         }
-        return maxDecimals;
+
+        radixSortLong(pos, posIdx);
+        radixSortLong(neg, negIdx);
+
+        // Si es descendente, invertir positivos y mantener negativos al final
+        if (ord.equalsIgnoreCase("Ascendente")) {
+            Collections.reverse(neg); // Volver a negativos correctamente ordenados
+            Collections.reverse(negIdx);
+        } else {
+            Collections.reverse(pos);
+            Collections.reverse(posIdx);
+        }
+
+        // Combinar resultados
+        List<Long> combined = new ArrayList<>();
+        List<Integer> combinedIdx = new ArrayList<>();
+
+        if (ord.equalsIgnoreCase("Ascendente")) {
+            for (int i = 0; i < neg.size(); i++) {
+                combined.add(-neg.get(i));
+                combinedIdx.add(negIdx.get(i));
+            }
+            combined.addAll(pos);
+            combinedIdx.addAll(posIdx);
+        } else {
+            for (int i = 0; i < pos.size(); i++) {
+                combined.add(pos.get(i));
+                combinedIdx.add(posIdx.get(i));
+            }
+            for (int i = 0; i < neg.size(); i++) {
+                combined.add(-neg.get(i));
+                combinedIdx.add(negIdx.get(i));
+            }
+        }
+
+        // Convertir de nuevo a double
+        for (int i = 0; i < n; i++) {
+            arr[i] = combined.get(i) / (double) factor;
+            indices[i] = combinedIdx.get(i);
+        }
     }
 
-    public void sort(double[] a)
-    {
-        Arrays.sort(a);
+    // Radix Sort para long (base 10)
+    private void radixSortLong(List<Long> arr, List<Integer> indices) {
+        int maxDigits = 18; // hasta 18 dígitos para long
+        long exp = 1;
+        int n = arr.size();
+
+        for (int i = 0; i < maxDigits; i++) {
+            List<List<Long>> buckets = new ArrayList<>();
+            List<List<Integer>> idxBuckets = new ArrayList<>();
+
+            for (int b = 0; b < 10; b++) {
+                buckets.add(new ArrayList<>());
+                idxBuckets.add(new ArrayList<>());
+            }
+
+            for (int j = 0; j < n; j++) {
+                long num = arr.get(j);
+                int digit = (int) ((num / exp) % 10);
+                buckets.get(digit).add(num);
+                idxBuckets.get(digit).add(indices.get(j));
+            }
+
+            arr.clear();
+            indices.clear();
+
+            for (int b = 0; b < 10; b++) {
+                arr.addAll(buckets.get(b));
+                indices.addAll(idxBuckets.get(b));
+            }
+
+            exp *= 10;
+        }
     }
 
-    public void parallelSort(double[] a)
-    {
-        Arrays.parallelSort(a);
-    }
 
-    private void merge(double[] a, int l, int m, int r) {
+
+    private void merge(double[] a, int[] indices, int l, int m, int r, String ord) {
         int n1 = m - l + 1;
         int n2 = r - m;
 
-        double[] L = new double[n1];
-        double[] R = new double[n2];
+        if (ord.equals("Ascendente")) {
+            double[] L = new double[n1];
+            double[] R = new double[n2];
 
-        for (int i = 0; i < n1; i++) {
-            L[i] = a[l + i];
-        }
+            int[] Lint = new int[n1];
+            int[] Rint = new int[n2];
 
-        for (int i = 0; i < n2; i++) {
-            R[i] = a[m + 1 + i];
-        }
-
-        int i = 0, j = 0;
-        int k = l;
-
-        while (i < n1 && j < n2) {
-            if (L[i] <= R[j]) {
-                a[k] = L[i];
-                i++;
-            } else {
-                a[k] = R[j];
-                j++;
+            for (int i = 0; i < n1; i++) {
+                L[i] = a[l + i];
+                Lint[i] = indices[l + i];
             }
-            k++;
-        }
 
-        while (i < n1) {
-            a[k] = L[i];
-            i++;
-            k++;
-        }
+            for (int i = 0; i < n2; i++) {
+                R[i] = a[m + 1 + i];
+                Rint[i] = indices[m + 1+ i];
+            }
 
-        while (j < n2) {
-            a[k] = R[j];
-            j++;
-            k++;
+            int i = 0, j = 0;
+            int k = l;
+
+            while (i < n1 && j < n2) {
+                if (L[i] <= R[j]) {
+                    a[k] = L[i];
+                    indices[k] = Lint[i];
+                    i++;
+                } else {
+                    a[k] = R[j];
+                    indices[k] = Rint[j];
+                    j++;
+                }
+                k++;
+            }
+
+            while (i < n1) {
+                a[k] = L[i];
+                indices[k] = Lint[i];
+                i++;
+                k++;
+            }
+
+            while (j < n2) {
+                a[k] = R[j];
+                indices[k] = Rint[j];
+                j++;
+                k++;
+            }
+        } else {
+            double[] L = new double[n1];
+            double[] R = new double[n2];
+
+            int[] Lint = new int[n1];
+            int[] Rint = new int[n2];
+
+            for (int i = 0; i < n1; i++) {
+                L[i] = a[l + i];
+                Lint[i] = indices[l + i];
+            }
+
+            for (int i = 0; i < n2; i++) {
+                R[i] = a[m + 1 + i];
+                Rint[i] = indices[m + 1+ i];
+            }
+
+            int i = 0, j = 0;
+            int k = l;
+
+            while (i < n1 && j < n2) {
+                if (L[i] >= R[j]) {
+                    a[k] = L[i];
+                    indices[k] = Lint[i];
+                    i++;
+                } else {
+                    a[k] = R[j];
+                    indices[k] = Rint[j];
+                    j++;
+                }
+                k++;
+            }
+
+            while (i < n1) {
+                a[k] = L[i];
+                indices[k] = Lint[i];
+                i++;
+                k++;
+            }
+
+            while (j < n2) {
+                a[k] = R[j];
+                indices[k] = Rint[j];
+                j++;
+                k++;
+            }
         }
     }
 
-    public void sort(double[] a, int l, int r) {
+    public void sort(double[] a,int [] indices, int l, int r, String ord) {
         if (l < r) {
             int m = l + (r - l) / 2;
 
-            sort(a, l, m);
-            sort(a, m + 1, r);
+            sort(a, indices, l, m, ord);
+            sort(a, indices, m + 1, r, ord);
 
-            merge(a, l, m, r);
+            merge(a, indices, l, m, r, ord);
         }
     }
 
-    public void mergeSort(double[] a) {
+    public void mergeSort(double[] a, int[] indices, String ord) {
         if (a != null && a.length > 1) {
-            sort(a, 0, a.length - 1);
+            sort(a, indices, 0, a.length - 1, ord);
         }
     }
 
     /// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Genericos
 
-    public <T extends  Comparable<T>> void quickSort(T[] a, int n)
+    public <T extends  Comparable<T>> void quickSort(T[] a, int[] indices, int n, String ord)
     {
         --n;
-        recursivo(0,n,a);
+        recursivo(0,n,a, indices, ord);
     }
 
-    private <T extends  Comparable<T>> void recursivo(int inicio, int fin, T[] a) {
+    private <T extends Comparable<T>> void recursivo(int inicio, int fin, T[] a, int[] indices, String ord) {
+        if (inicio >= fin) return;
+
         int izq = inicio;
         int der = fin;
-        int pos = inicio;
-        boolean bandera = true;
+        T pivote = a[inicio];
 
-        while (bandera) {
-            bandera = false;
-            // usar compareTo en lugar de <=
-            while (((Comparable<T>) a[pos]).compareTo(a[der]) <= 0 && pos != der) {
-                --der;
+        while (izq <= der) {
+            if (ord.equals("Ascendente")) {
+                while (izq <= fin && a[izq].compareTo(pivote) < 0) izq++;
+                while (der >= inicio && a[der].compareTo(pivote) > 0) der--;
+            } else {
+                while (izq <= fin && a[izq].compareTo(pivote) > 0) izq++;
+                while (der >= inicio && a[der].compareTo(pivote) < 0) der--;
             }
 
-            if (pos != der) {
-                T aux = a[pos];
-                a[pos] = a[der];
-                a[der] = aux;
-                pos = der;
+            if (izq <= der) {
+                // Intercambiar valores en el arreglo principal
+                T temp = a[izq];
+                a[izq] = a[der];
+                a[der] = temp;
 
-                // usar compareTo en lugar de >=
-                while (((Comparable<T>) a[pos]).compareTo(a[izq]) >= 0 && pos != izq) {
-                    ++izq;
-                }
+                // Intercambiar índices asociados
+                int tempIdx = indices[izq];
+                indices[izq] = indices[der];
+                indices[der] = tempIdx;
 
-                if (pos != izq) {
-                    bandera = true;
-                    aux = a[pos];
-                    a[pos] = a[izq];
-                    a[izq] = aux;
-                    pos = izq;
-                }
+                izq++;
+                der--;
             }
         }
 
-        if ((pos - 1) > inicio) {
-            recursivo(inicio, pos - 1, a);
-        }
-        if (fin > (pos + 1)) {
-            recursivo(pos + 1, fin, a);
-        }
+        // Llamadas recursivas a subarreglos
+        recursivo(inicio, der, a, indices, ord);
+        recursivo(izq, fin, a, indices, ord);
     }
 
-    public <T extends  Comparable<T>> void seleccion(T[] a, int n)
+    public <T extends  Comparable<T>> void seleccion(T[] a, int[] indices, String ord, int n)
     {
-        for (int i = 0; i < n-1; i++) {
-            T menor = a[i];
-            int k = i;
-            for (int j = i+1; j < n; j++) {
-                if (((Comparable<T>) a[j]).compareTo(menor) < 0) {
-                    menor = a[j];
-                    k = j;
-                }
-            }
-            a[k] = a[i];
-            a[i] = menor;
-        }
-    }
-
-    public <T extends  Comparable<T>> void shell(T[] a, int n)
-    {
-        int inter = n + 1;
-        while (inter > 1) {
-            inter = inter / 2;
-            boolean bandera = true;
-            while (bandera) {
-                bandera = false;
-                int i = 0;
-                while ((i + inter) <= n) {
-
-                    if (((Comparable<T>) a[i]).compareTo(a[i + inter]) > 0) {
-                        T aux = a[i];
-                        a[i] = a[i + inter];
-                        a[i + inter] = aux;
-                        bandera = true;
+        if (ord.equals("Ascendente")) {
+            for (int i = 0; i < n - 1; i++) {
+                int k = i;
+                for (int j = i + 1; j < n; j++) {
+                    if (a[j].compareTo(a[k]) < 0) {
+                        k = j;
                     }
-                    ++i;
+                }
+
+                T tempA = a[i];
+                a[i] = a[k];
+                a[k] = tempA;
+
+                int tempIndex = indices[i];
+                indices[i] = indices[k];
+                indices[k] = tempIndex;
+            }
+        } else {
+            for (int i = 0; i < n - 1; i++) {
+                int k = i;
+                for (int j = i + 1; j < n; j++) {
+                    if (a[j].compareTo(a[k]) > 0) {
+                        k = j;
+                    }
+                }
+                T tempA = a[i];
+                a[i] = a[k];
+                a[k] = tempA;
+
+                int tempIndex = indices[i];
+                indices[i] = indices[k];
+                indices[k] = tempIndex;
+            }
+        }
+    }
+
+    public <T extends  Comparable<T>> void shell(T[] a, int[] indices, int n, String ord)
+    {
+        if (ord.equals("Ascendente")) {
+            int inter = n;
+            while (inter > 1) {
+                inter = inter / 2;
+                boolean bandera = true;
+                while (bandera) {
+                    bandera = false;
+                    int i = 0;
+                    while ((i + inter) < n) {
+
+                        if (a[i].compareTo(a[i + inter]) > 0) {
+                            T aux = a[i];
+                            a[i] = a[i + inter];
+                            a[i + inter] = aux;
+
+                            int auxIndice = indices[i];
+                            indices[i] = indices[i + inter];
+                            indices[i + inter] = auxIndice;
+
+                            bandera = true;
+                        }
+                        ++i;
+                    }
+                }
+            }
+        } else {
+            int inter = n;
+            while (inter > 1) {
+                inter = inter / 2;
+                boolean bandera = true;
+                while (bandera) {
+                    bandera = false;
+                    int i = 0;
+                    while ((i + inter) < n) {
+
+                        if (a[i].compareTo(a[i + inter]) < 0) {
+                            T aux = a[i];
+                            a[i] = a[i + inter];
+                            a[i + inter] = aux;
+
+                            int auxIndice = indices[i];
+                            indices[i] = indices[i + inter];
+                            indices[i + inter] = auxIndice;
+
+                            bandera = true;
+                        }
+                        ++i;
+                    }
                 }
             }
         }
+
     }
 
-    private int obtenerMax(int[] arr, int n)
+    public <T extends Comparable<T>> void sort(T[] a, Integer[] indices, String ord) {
+        if (ord.equalsIgnoreCase("Ascendente")) {
+            Arrays.sort(indices, (i1, i2) -> a[i1].compareTo(a[i2]));
+        } else {
+            Arrays.sort(indices, (i1, i2) -> a[i2].compareTo(a[i1]));
+        }
+
+        T[] aOrdenado = Arrays.copyOf(a, a.length);
+        for (int i = 0; i < a.length; i++) {
+            aOrdenado[i] = a[indices[i]];
+        }
+
+        // Copia de vuelta a
+        System.arraycopy(aOrdenado, 0, a, 0, a.length);
+    }
+
+    public <T extends  Comparable<T>> void parallelSort(T[] a, Integer[] indices, String ord)
     {
-        int max = arr[0];
-        for (int i = 1; i < n; ++i) {
-            if (arr[i] > max) {
-                max = arr[i];
-            }
+        if (ord.equalsIgnoreCase("Ascendente")) {
+            Arrays.parallelSort(indices, (i1, i2) -> a[i1].compareTo(a[i2]));
+        } else {
+            Arrays.parallelSort(indices, (i1, i2) -> a[i2].compareTo(a[i1]));
         }
 
-        return max;
+        T[] aOrdenado = Arrays.copyOf(a, a.length);
+        for (int i = 0; i < a.length; i++) {
+            aOrdenado[i] = a[indices[i]];
+        }
+
+        // Copia de vuelta a
+        System.arraycopy(aOrdenado, 0, a, 0, a.length);
     }
 
-    /**
-     *
-     * @param arr
-     * @param n
-     * @param exp
-     */
-    private void countSort(int[] arr, int n, int exp)
-    {
-        int[] salida = new int[n];
-        int[] contador = new int[10];
-        Arrays.fill(contador, 0);
-
-        for (int j = 0; j < n; j++) {
-            ++contador[arr[j] / exp % 10];
-        }
-
-        for (int j = 1; j < 10; j++) {
-            contador[j] += contador[j-1];
-        }
-
-        for (int j = n - 1; j >= 0; j--) {
-            salida[contador[(arr[j] / exp) % 10] - 1] = arr[j];
-            --contador[(arr[j] / exp) % 10];
-        }
-
-        for (int j = 0; j < n; j++) {
-            arr[j] = salida[j];
-        }
-    }
-
-    /**
-     * Metodo de ordenamiento radixSort
-     * @param arr
-     * @param n
-     */
-    public void radixSort(int[] arr, int n)
-    {
-        int max = obtenerMax(arr, n);
-
-        for (int exp = 1; max / exp > 0; exp *= 10) {
-            countSort(arr, n, exp);
-        }
-    }
-
-    public <T extends  Comparable<T>> void sort(T[] a)
-    {
-        Arrays.sort(a);
-    }
-
-    public <T extends  Comparable<T>> void parallelSort(T[] a)
-    {
-        Arrays.parallelSort(a);
-    }
-
-    private <T extends  Comparable<T>> void merge(T[] a, int l, int m, int r)
+    private <T extends  Comparable<T>> void merge(T[] a, int [] indices, int l, int m, int r, String ord)
     {
         int n1 = m - l + 1;
         int n2 = r - m;
 
-        T[] L = (T[]) new Object[n1];
-        T[] R = (T[]) new Object[n2];
+        if (ord.equals("Ascendente")) {
+            T[] L = (T[]) Array.newInstance(a.getClass().getComponentType(), n1);
 
-        for (int i = 0; i < n1; i++) {
-            L[i] = a[l + i];
-        }
+            T[] R = (T[]) Array.newInstance(a.getClass().getComponentType(), n2);
+            int[] Lint = new int[n1];
+            int[] Rint = new int[n2];
 
-        for (int i = 0; i < n2; i++) {
-            R[i] = a[m + 1 + i];
-        }
-
-        int i = 0;
-        int j = 0;
-
-        int k = l;
-
-        while (i < n1 && j < n2) {
-
-            if (((Comparable<T>) L[i]).compareTo(R[j]) <= 0) {
-                a[k] = L[i];
-                ++i;
-            } else {
-                a[k] = R[j];
-                ++j;
+            for (int i = 0; i < n1; i++) {
+                L[i] = a[l + i];
+                Lint[i] = indices[l + i];
             }
-            ++k;
-        }
 
-        while (i < n1)
-        {
-           a[k] = L[i];
-           ++i;
-           ++k;
-        }
+            for (int i = 0; i < n2; i++) {
+                R[i] = a[m + 1 + i];
+                Rint[i] = indices[m + 1+ i];
+            }
 
-        while (j < n2)
-        {
-            a[k] = R[j];
-            ++j;
-            ++k;
+            int i = 0, j = 0;
+            int k = l;
+
+            while (i < n1 && j < n2) {
+                if (L[i].compareTo(R[j]) <= 0) {
+                    a[k] = L[i];
+                    indices[k] = Lint[i];
+                    i++;
+                } else {
+                    a[k] = R[j];
+                    indices[k] = Rint[j];
+                    j++;
+                }
+                k++;
+            }
+
+            while (i < n1) {
+                a[k] = L[i];
+                indices[k] = Lint[i];
+                i++;
+                k++;
+            }
+
+            while (j < n2) {
+                a[k] = R[j];
+                indices[k] = Rint[j];
+                j++;
+                k++;
+            }
+        } else {
+            T[] L = (T[]) Array.newInstance(a.getClass().getComponentType(), n1);
+
+            T[] R = (T[]) Array.newInstance(a.getClass().getComponentType(), n2);
+
+            int[] Lint = new int[n1];
+            int[] Rint = new int[n2];
+
+            for (int i = 0; i < n1; i++) {
+                L[i] = a[l + i];
+                Lint[i] = indices[l + i];
+            }
+
+            for (int i = 0; i < n2; i++) {
+                R[i] = a[m + 1 + i];
+                Rint[i] = indices[m + 1+ i];
+            }
+
+            int i = 0, j = 0;
+            int k = l;
+
+            while (i < n1 && j < n2) {
+                if (L[i].compareTo(R[j]) >= 0) {
+                    a[k] = L[i];
+                    indices[k] = Lint[i];
+                    i++;
+                } else {
+                    a[k] = R[j];
+                    indices[k] = Rint[j];
+                    j++;
+                }
+                k++;
+            }
+
+            while (i < n1) {
+                a[k] = L[i];
+                indices[k] = Lint[i];
+                i++;
+                k++;
+            }
+
+            while (j < n2) {
+                a[k] = R[j];
+                indices[k] = Rint[j];
+                j++;
+                k++;
+            }
         }
     }
 
-    public <T extends  Comparable<T>> void sort(T[] a, int l, int r)
+    public <T extends  Comparable<T>> void sort(T[] a, int l, int r, String ord, int[] indices)
     {
         if (l < r)
         {
             int m = l + (r - l) / 2;
 
-            sort(a, l, m);
-            sort(a, m + 1, r);
+            sort(a, l, m, ord, indices);
+            sort(a, m + 1, r, ord, indices);
 
-            merge(a, l, m, r);
+            merge(a, indices,l, m, r, ord);
         }
     }
 
-    public <T extends  Comparable<T>> void mergeSort(T[] a)
+    public <T extends  Comparable<T>> void mergeSort(T[] a, int[] indices, String ord)
     {
         if (a != null && a.length > 1) {
-            sort(a, 0, a.length - 1);
+            sort(a, 0, a.length - 1, ord, indices);
         }
     }
 
