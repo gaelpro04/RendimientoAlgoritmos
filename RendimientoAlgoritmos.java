@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.jfree.chart.*;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.statistics.HistogramDataset;
 
 public class RendimientoAlgoritmos {
 
@@ -16,7 +18,7 @@ public class RendimientoAlgoritmos {
 
    private JFrame frame;
    private JPanel panelTabla, panelBotones, panelIzquierdo, panelDerecho, panelInformacion;
-   private JComboBox<String> comboBoxAlgoritmos, comboBoxColumna, comboBoxOrdenamiento;
+   private JComboBox<String> comboBoxAlgoritmos, comboBoxColumna, comboBoxOrdenamiento, comboBoxGraficas;
    private JButton botonOrdenar, botonOrdenarTodo;
    private JLabel labelInformacion, labelEncabezado, labelColumna;
    private JTable tablaDatos;
@@ -24,7 +26,9 @@ public class RendimientoAlgoritmos {
    public RendimientoAlgoritmos()
    {
       csv = new LecturaArchivos();
-      csv.leer("C:\\Users\\Usuario\\IdeaProjects\\RendimientoAlgoritmos\\archive\\weatherHistory.csv");
+      //csv.leer("C:\\Users\\Usuario\\IdeaProjects\\RendimientoAlgoritmos\\archive\\weatherHistory.csv");
+      csv.leer("C:\\Users\\sgsg_\\IdeaProjects\\RendimientoAlgoritmos\\archive\\weatherHistory.csv");
+
       String[] encabezados = csv.regresarFilaString(0);
       algoritmos = new Ordenamientos();
 
@@ -146,9 +150,10 @@ public class RendimientoAlgoritmos {
       labelGraficado.setFont(new Font("Arial", Font.BOLD, 14));
       labelGraficado.setBounds(90,105,192,25);
 
-      JComboBox<String> comboBoxGraficas = new JComboBox<>(encabezados);
+      comboBoxGraficas = new JComboBox<>(encabezados);
       comboBoxGraficas.setBounds(50,130,192,25);
       comboBoxGraficas.setFocusable(false);
+      comboBoxGraficas.addActionListener(action -> graficar());
 
       panelBotones.add(labelGraficado);
       panelBotones.add(comboBoxGraficas);
@@ -373,25 +378,30 @@ public class RendimientoAlgoritmos {
             }
             break;
          case "radixSort":
-            double[] columnaArreglo1 = new double[datos.length];
-            int[] indices1 = new int[datos.length];
+            if (tipo.equals("numerico")) {
+               double[] columnaArreglo1 = new double[datos.length];
+               int[] indices1 = new int[datos.length];
 
-            for (int i = 0; i < columnaArreglo1.length; ++i) {
-               columnaArreglo1[i] = Double.parseDouble(datos[i][indice].toString());
-               indices1[i] = i;
-            }
+               for (int i = 0; i < columnaArreglo1.length; ++i) {
+                  columnaArreglo1[i] = Double.parseDouble(datos[i][indice].toString());
+                  indices1[i] = i;
+               }
 
 
-            startTime = System.nanoTime();
-            algoritmos.radixSort(columnaArreglo1, indices1, ordenamiento);
-            endTime = System.nanoTime();
+               startTime = System.nanoTime();
+               algoritmos.radixSort(columnaArreglo1, indices1, ordenamiento);
+               endTime = System.nanoTime();
 
-            time = endTime - startTime;
+               time = endTime - startTime;
 
-            nuevosDatos = new Object[datos.length][datos[0].length];
-            for (int i = 0; i < datos.length; i++) {
-               nuevosDatos[i] = datos[indices1[i]];
-            }
+               nuevosDatos = new Object[datos.length][datos[0].length];
+               for (int i = 0; i < datos.length; i++) {
+                  nuevosDatos[i] = datos[indices1[i]];
+               }
+            } else {
+               nuevosDatos = datos;
+         }
+
             break;
          case "sort":
             switch (tipo) {
@@ -517,6 +527,7 @@ public class RendimientoAlgoritmos {
       Object[][] nuevosDatos = new Object[datos.length][datos[0].length];
 
       for (int i = 0; i < elementos.length; i++) {
+         time = 0;
          long startTime = 0;
          long endTime = 0;
          nuevosDatos = new Object[datos.length][datos[0].length];
@@ -545,6 +556,25 @@ public class RendimientoAlgoritmos {
                      }
                      break;
                   case "string":
+                     String[] columnaArreglo1 = new String[datos.length];
+                     int[] indices1 = new int[datos.length];
+
+                     for (int j = 0; j < columnaArreglo1.length; ++j) {
+                        columnaArreglo1[j] = datos[j][indice].toString();
+                        indices1[j] = j;
+                     }
+
+
+                     startTime = System.nanoTime();
+                     algoritmos.quickSort(columnaArreglo1, indices1, columnaArreglo1.length, ordenamiento);
+                     endTime = System.nanoTime();
+
+                     time = endTime - startTime;
+
+                     nuevosDatos = new Object[datos.length][datos[0].length];
+                     for (int j = 0; j < datos.length; j++) {
+                        nuevosDatos[j] = datos[indices1[j]];
+                     }
                      break;
                }
                break;
@@ -572,6 +602,25 @@ public class RendimientoAlgoritmos {
                      }
                      break;
                   case "string":
+                     String[] columnaArreglo1 = new String[datos.length];
+                     int[] indices1 = new int[datos.length];
+
+                     for (int j = 0; j < columnaArreglo1.length; ++j) {
+                        columnaArreglo1[j] = datos[j][indice].toString();
+                        indices1[j] = j;
+                     }
+
+
+                     startTime = System.nanoTime();
+                     algoritmos.mergeSort(columnaArreglo1, indices1, ordenamiento);
+                     endTime = System.nanoTime();
+
+                     time = endTime - startTime;
+
+                     nuevosDatos = new Object[datos.length][datos[0].length];
+                     for (int j = 0; j < datos.length; j++) {
+                        nuevosDatos[j] = datos[indices1[j]];
+                     }
                      break;
                }
                break;
@@ -599,6 +648,25 @@ public class RendimientoAlgoritmos {
                      }
                      break;
                   case "string":
+                     String[] columnaArreglo1 = new String[datos.length];
+                     int[] indices1 = new int[datos.length];
+
+                     for (int j = 0; j < columnaArreglo1.length; ++j) {
+                        columnaArreglo1[j] = datos[j][indice].toString();
+                        indices1[j] = j;
+                     }
+
+
+                     startTime = System.nanoTime();
+                     algoritmos.shell(columnaArreglo1, indices1, columnaArreglo1.length, ordenamiento);
+                     endTime = System.nanoTime();
+
+                     time = endTime - startTime;
+
+                     nuevosDatos = new Object[datos.length][datos[0].length];
+                     for (int j = 0; j < datos.length; j++) {
+                        nuevosDatos[j] = datos[indices1[j]];
+                     }
                      break;
                }
                break;
@@ -626,79 +694,154 @@ public class RendimientoAlgoritmos {
                      }
                      break;
                   case "string":
+                     String[] columnaArreglo1 = new String[datos.length];
+                     int[] indices1 = new int[datos.length];
+
+                     for (int j = 0; j < columnaArreglo1.length; ++j) {
+                        columnaArreglo1[j] = datos[j][indice].toString();
+                        indices1[i] = j;
+                     }
+
+
+                     startTime = System.nanoTime();
+                     algoritmos.seleccion(columnaArreglo1, indices1, ordenamiento, columnaArreglo1.length);
+                     endTime = System.nanoTime();
+
+                     time = endTime - startTime;
+
+                     nuevosDatos = new Object[datos.length][datos[0].length];
+                     for (int j = 0; j < datos.length; j++) {
+                        nuevosDatos[j] = datos[indices1[j]];
+                     }
                      break;
                }
                break;
             case 4:
-               double[] columnaArreglo = new double[datos.length];
-               int[] indices = new int[datos.length];
+               if (!tipo.equals("string")) {
+                  double[] columnaArreglo = new double[datos.length];
+                  int[] indices = new int[datos.length];
 
-               for (int j = 0; j < columnaArreglo.length; ++j) {
-                  columnaArreglo[j] = Double.parseDouble(datos[j][indice].toString());
-                  indices[j] = j;
-               }
+                  for (int j = 0; j < columnaArreglo.length; ++j) {
+                     columnaArreglo[j] = Double.parseDouble(datos[j][indice].toString());
+                     indices[j] = j;
+                  }
 
 
-               startTime = System.nanoTime();
-               algoritmos.radixSort(columnaArreglo, indices, ordenamiento);
-               endTime = System.nanoTime();
+                  startTime = System.nanoTime();
+                  algoritmos.radixSort(columnaArreglo, indices, ordenamiento);
+                  endTime = System.nanoTime();
 
-               time = endTime - startTime;
+                  time = endTime - startTime;
 
-               nuevosDatos = new Object[datos.length][datos[0].length];
-               for (int j = 0; j < datos.length; j++) {
-                  nuevosDatos[j] = datos[indices[j]];
+                  nuevosDatos = new Object[datos.length][datos[0].length];
+                  for (int j = 0; j < datos.length; j++) {
+                     nuevosDatos[j] = datos[indices[j]];
+                  }
                }
                break;
             case 5:
-               Double[] columnaArreglo2 = new Double[datos.length];
-               Integer[] indices2 = new Integer[datos.length];
+               switch (tipo) {
+                  case "numerico":
+                     Double[] columnaArreglo2 = new Double[datos.length];
+                     Integer[] indices2 = new Integer[datos.length];
 
-               for (int j = 0; j < columnaArreglo2.length; ++j) {
-                  columnaArreglo2[j] = Double.parseDouble(datos[j][indice].toString());
-                  indices2[j] = j;
-               }
+                     for (int j = 0; j < columnaArreglo2.length; ++j) {
+                        columnaArreglo2[j] = Double.parseDouble(datos[j][indice].toString());
+                        indices2[j] = j;
+                     }
 
 
-               startTime = System.nanoTime();
-               algoritmos.sort(columnaArreglo2, indices2, ordenamiento);
-               endTime = System.nanoTime();
+                     startTime = System.nanoTime();
+                     algoritmos.sort(columnaArreglo2, indices2, ordenamiento);
+                     endTime = System.nanoTime();
 
-               time = endTime - startTime;
+                     time = endTime - startTime;
 
-               nuevosDatos = new Object[datos.length][datos[0].length];
-               for (int j = 0; j < datos.length; j++) {
-                  nuevosDatos[j] = datos[indices2[j]];
+                     nuevosDatos = new Object[datos.length][datos[0].length];
+                     for (int j = 0; j < datos.length; j++) {
+                        nuevosDatos[j] = datos[indices2[j]];
+                     }
+                     break;
+                  case "string":
+                     String[] columnaArreglo1 = new String[datos.length];
+                     Integer[] indices1 = new Integer[datos.length];
+
+                     for (int j = 0; j < columnaArreglo1.length; ++j) {
+                        columnaArreglo1[j] = datos[j][indice].toString();
+                        indices1[j] = j;
+                     }
+
+
+                     startTime = System.nanoTime();
+                     algoritmos.sort(columnaArreglo1, indices1, ordenamiento);
+                     endTime = System.nanoTime();
+
+                     time = endTime - startTime;
+
+                     nuevosDatos = new Object[datos.length][datos[0].length];
+                     for (int j = 0; j < datos.length; j++) {
+                        nuevosDatos[j] = datos[indices1[j]];
+                     }
+                     break;
                }
                break;
             case 6:
-               Double[] columnaArreglo1 = new Double[datos.length];
-               Integer[] indices1 = new Integer[datos.length];
+               switch (tipo) {
+                  case "numerico":
+                     Double[] columnaArreglo2 = new Double[datos.length];
+                     Integer[] indices2 = new Integer[datos.length];
 
-               for (int j = 0; j < columnaArreglo1.length; ++j) {
-                  columnaArreglo1[j] = Double.parseDouble(datos[j][indice].toString());
-                  indices1[j] = j;
-               }
+                     for (int j = 0; j < columnaArreglo2.length; ++j) {
+                        columnaArreglo2[j] = Double.parseDouble(datos[j][indice].toString());
+                        indices2[j] = j;
+                     }
 
 
-               startTime = System.nanoTime();
-               algoritmos.parallelSort(columnaArreglo1, indices1, ordenamiento);
-               endTime = System.nanoTime();
+                     startTime = System.nanoTime();
+                     algoritmos.parallelSort(columnaArreglo2, indices2, ordenamiento);
+                     endTime = System.nanoTime();
 
-               time = endTime - startTime;
+                     time = endTime - startTime;
 
-               nuevosDatos = new Object[datos.length][datos[0].length];
-               for (int j = 0; j < datos.length; j++) {
-                  nuevosDatos[j] = datos[indices1[j]];
+                     nuevosDatos = new Object[datos.length][datos[0].length];
+                     for (int j = 0; j < datos.length; j++) {
+                        nuevosDatos[j] = datos[indices2[j]];
+                     }
+                     break;
+                  case "string":
+                     String[] columnaArreglo1 = new String[datos.length];
+                     Integer[] indices1 = new Integer[datos.length];
+
+                     for (int j = 0; j < columnaArreglo1.length; ++j) {
+                        columnaArreglo1[j] = datos[j][indice].toString();
+                        indices1[j] = j;
+                     }
+
+
+                     startTime = System.nanoTime();
+                     algoritmos.parallelSort(columnaArreglo1, indices1, ordenamiento);
+                     endTime = System.nanoTime();
+
+                     time = endTime - startTime;
+
+                     nuevosDatos = new Object[datos.length][datos[0].length];
+                     for (int j = 0; j < datos.length; j++) {
+                        nuevosDatos[j] = datos[indices1[j]];
+                     }
+                     break;
                }
                break;
          }
          double nuevoTime = time / 1000000000.0;
          if (nuevoTime > 60) {
             nuevoTime = nuevoTime / 60;
+            builder.append("<html> Columna:  " + columna + "<br> Algoritmo:  " +
+                    elementos[i] + "<br> Tiempo transcurrido:  " + nuevoTime + " m <br> <html>");
+         } else {
+            builder.append("<html> Columna:  " + columna + "<br> Algoritmo:  " +
+                    elementos[i] + "<br> Tiempo transcurrido:  " + nuevoTime + " s <br> <html>");
          }
-         builder.append("<html> Columna:  " + columna + "<br> Algoritmo:  " +
-                 elementos[i] + "<br> Tiempo transcurrido:  " + nuevoTime + " s <br> <html>");
+
 
       }
       setTabla(nuevosDatos, encabezados);
@@ -752,5 +895,61 @@ public class RendimientoAlgoritmos {
 
       panelInformacion.repaint();
       panelInformacion.revalidate();
+   }
+
+   private void graficar()
+   {
+      String columna = (String) comboBoxGraficas.getSelectedItem();
+
+      String[] encabezados = csv.regresarFilaString(0);
+      ArrayList<String> encebzadosArray = new ArrayList<>(encabezados.length);
+      encebzadosArray.addAll(Arrays.asList(encabezados));
+      int indice = encebzadosArray.indexOf(columna);
+
+      double[] columnaG = new double[datos.length];
+
+      for (int i = 0; i < datos.length; i++) {
+         columnaG[i] = Double.parseDouble(datos[i][indice].toString());
+      }
+
+      graficacion(columnaG);
+
+   }
+
+   private void graficacion(double[] columna)
+   {
+      int cantidad = columna.length;
+      int cantidadRangos = (int) Math.sqrt(cantidad);
+
+      double max = columna[columna.length - 1];
+      double min = columna[0];
+
+      double rango = (max - min) / cantidadRangos;
+
+      int[] frecuencias = new int[cantidadRangos];
+      int indice = 0;
+      double intervaloMenor = columna[0];
+      boolean bandera = true;
+
+
+
+      HistogramDataset dataSet = new HistogramDataset();
+      dataSet.addSeries("Frecuencia", columna, 311);
+
+      JFreeChart histograma = ChartFactory.createHistogram("Valores", "Valor", "Frecuencia",
+              dataSet, PlotOrientation.VERTICAL, true, true, false);
+
+      ChartPanel panel = new ChartPanel(histograma);
+
+      JFrame frameGrafica = new JFrame("Grafica");
+      frameGrafica.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+
+      frameGrafica.add(panel);
+
+      frameGrafica.setLocationRelativeTo(null);
+      frameGrafica.setVisible(true);
+      frameGrafica.setSize(600,600);
+
+
    }
 }

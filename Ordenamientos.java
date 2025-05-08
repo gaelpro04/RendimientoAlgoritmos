@@ -13,107 +13,51 @@ public class Ordenamientos {
     }
 
     private void recursivo(int inicio, int fin, double[] a, int[] indices, String ord) {
+        if (inicio >= fin) {
+            return;
+        }
 
-        if (ord.equals("Ascendente")) {
-            int izq = inicio;
-            int der = fin;
-            int pos = inicio;
-            boolean bandera = true;
+        int izq = inicio;
+        int der = fin;
+        double pivote = a[inicio];  // Puedes cambiarlo por a[(inicio + fin) / 2] si lo deseas
 
-            while (bandera) {
-                bandera = false;
-                // usar compareTo en lugar de <=
-                while ((a[pos] <= a[der]) && pos != der) {
-                    --der;
+        while (izq <= der) {
+            if (ord.equals("Ascendente")) {
+                while (izq <= fin && a[izq] < pivote) {
+                    izq++;
                 }
-
-                if (pos != der) {
-                    double aux = a[pos];
-                    a[pos] = a[der];
-                    a[der] = aux;
-
-                    int auxDouble = indices[pos];
-                    indices[pos] = indices[der];
-                    indices[der] = auxDouble;
-
-                    pos = der;
-
-                    // usar compareTo en lugar de >=
-                    while ((a[pos] >= a[izq]) && pos != izq) {
-                        ++izq;
-                    }
-
-                    if (pos != izq) {
-                        aux = a[pos];
-                        a[pos] = a[izq];
-                        a[izq] = aux;
-
-                        auxDouble = indices[pos];
-                        indices[pos] = indices[izq];
-                        indices[izq] = auxDouble;
-
-                        pos = izq;
-                        bandera = true;
-                    }
+                while (der >= inicio && a[der] > pivote) {
+                    der--;
+                }
+            } else {
+                while (izq <= fin && a[izq] > pivote) {
+                    izq++;
+                }
+                while (der >= inicio && a[der] < pivote) {
+                    der--;
                 }
             }
 
-            if ((pos - 1) > inicio) {
-                recursivo(inicio, pos - 1, a, indices, ord);
-            }
-            if (fin > (pos + 1)) {
-                recursivo(pos + 1, fin, a, indices, ord);
-            }
-        } else {
-            int izq = inicio;
-            int der = fin;
-            int pos = inicio;
-            boolean bandera = true;
+            if (izq <= der) {
+                double aux = a[izq];
+                a[izq] = a[der];
+                a[der] = aux;
 
-            while (bandera) {
-                bandera = false;
-                while ((a[pos] >= a[der]) && pos != der) {
-                    --der;
-                }
+                int auxIndex = indices[izq];
+                indices[izq] = indices[der];
+                indices[der] = auxIndex;
 
-                if (pos != der) {
-                    double aux = a[pos];
-                    a[pos] = a[der];
-                    a[der] = aux;
-
-                    int auxDouble = indices[pos];
-                    indices[pos] = indices[der];
-                    indices[der] = auxDouble;
-
-                    pos = der;
-
-                    while ((a[pos] <= a[izq]) && pos != izq) {
-                        ++izq;
-                    }
-
-                    if (pos != izq) {
-                        aux = a[pos];
-                        a[pos] = a[izq];
-                        a[izq] = aux;
-
-                        auxDouble = indices[pos];
-                        indices[pos] = indices[izq];
-                        indices[izq] = auxDouble;
-
-                        pos = izq;
-                        bandera = true;
-                    }
-                }
-            }
-
-            if ((pos - 1) > inicio) {
-                recursivo(inicio, pos - 1, a, indices, ord);
-            }
-            if (fin > (pos + 1)) {
-                recursivo(pos + 1, fin, a, indices, ord);
+                izq++;
+                der--;
             }
         }
 
+        if (inicio < der) {
+            recursivo(inicio, der, a, indices, ord);
+        }
+        if (izq < fin) {
+            recursivo(izq, fin, a, indices, ord);
+        }
     }
 
     public void seleccion(double[] a, int[] indices, int n, String ord) {
