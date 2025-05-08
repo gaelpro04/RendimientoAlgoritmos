@@ -5,13 +5,13 @@ import java.util.Arrays;
 //Clase que contiene dinstintos metodos de ordenamiento
 public class Ordenamientos {
 
-    public void quickSort(double[] a, int n)
+    public void quickSort(double[] a, int[] indices, int n)
     {
         --n;
-        recursivo(0,n,a);
+        recursivo(0,n,a, indices);
     }
 
-    private void recursivo(int inicio, int fin, double[] a) {
+    private void recursivo(int inicio, int fin, double[] a, int[] indices) {
         int izq = inicio;
         int der = fin;
         int pos = inicio;
@@ -28,6 +28,11 @@ public class Ordenamientos {
                 double aux = a[pos];
                 a[pos] = a[der];
                 a[der] = aux;
+
+                int auxDouble = indices[pos];
+                indices[pos] = indices[der];
+                indices[der] = auxDouble;
+
                 pos = der;
 
                 // usar compareTo en lugar de >=
@@ -36,20 +41,25 @@ public class Ordenamientos {
                 }
 
                 if (pos != izq) {
-                    bandera = true;
                     aux = a[pos];
                     a[pos] = a[izq];
                     a[izq] = aux;
+
+                    auxDouble = indices[pos];
+                    indices[pos] = indices[izq];
+                    indices[izq] = auxDouble;
+
                     pos = izq;
+                    bandera = true;
                 }
             }
         }
 
         if ((pos - 1) > inicio) {
-            recursivo(inicio, pos - 1, a);
+            recursivo(inicio, pos - 1, a, indices);
         }
         if (fin > (pos + 1)) {
-            recursivo(pos + 1, fin, a);
+            recursivo(pos + 1, fin, a, indices);
         }
     }
 

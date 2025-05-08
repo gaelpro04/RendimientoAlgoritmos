@@ -26,6 +26,7 @@ public class RendimientoAlgoritmos {
       csv = new LecturaArchivos();
       csv.leer("C:\\Users\\sgsg_\\IdeaProjects\\RendimientoAlgoritmos\\archive\\weatherHistory.csv");
       String[] encabezados = csv.regresarFilaString(0);
+      algoritmos = new Ordenamientos();
 
 
       frame = new JFrame("Prueba de algoritmos");
@@ -129,38 +130,127 @@ public class RendimientoAlgoritmos {
 
    private void botonOrdenar()
    {
-      String algoritmo = comboBoxAlgoritmos.getActionCommand();
-      String columna = comboBoxColumna.getActionCommand();
+      String algoritmo = (String) comboBoxAlgoritmos.getSelectedItem();
 
       String[] encabezados = csv.regresarFilaString(0);
-      ArrayList<Object> encebzadosArray = new ArrayList<>(encabezados.length);
+      ArrayList<String> encebzadosArray = new ArrayList<>(encabezados.length);
       encebzadosArray.addAll(Arrays.asList(encabezados));
+      int indice = encebzadosArray.indexOf((String) comboBoxColumna.getSelectedItem());
 
-      String[] elementos = {"quickSort", "mergeSort", "shellSort", "seleccion", "radixSort", "sort", "parallelSort"};
-      long startTime;
-      long endTime;
+      // String[] elementos = {"quickSort", "mergeSort", "shellSort", "seleccion", "radixSort", "sort", "parallelSort"};
+      String tipo;
+      if (indice > 2 && indice < 11) {
+         tipo = "numerico";
+      } else {
+         tipo = "string";
+      }
+
+      System.out.println("Algoritmo: " + algoritmo + " Columna: " + indice);
 
       switch (algoritmo) {
          case "quickSort":
-            startTime = System.nanoTime();
+            switch (tipo) {
+               case "numerico":
+                  double[] columnaArreglo = new double[datos.length];
+                  int[] indices = new int[datos.length];
+
+                  for (int i = 0; i < columnaArreglo.length; ++i) {
+                     columnaArreglo[i] = Double.parseDouble(datos[i][indice].toString());
+                     indices[i] = i;
+                  }
+
+                  long startTime = System.nanoTime();
+                  algoritmos.quickSort(columnaArreglo, indices, columnaArreglo.length);
+                  long endTime = System.nanoTime();
+
+                  Object[][] nuevosDatos = new Object[datos.length][datos[0].length];
+                  for (int i = 0; i < datos.length; i++) {
+                     nuevosDatos[i] = datos[indices[i]];
+                  }
+
+                  DefaultTableModel modelo = new DefaultTableModel(nuevosDatos, encabezados) {
+                     @Override
+                     public boolean isCellEditable(int row, int column) {
+                        return false; // Ninguna celda editable
+                     }
+                  };
+                  JTable nuevaTabla = new JTable(modelo);
+
+                  tablaDatos = nuevaTabla;
+                  tablaDatos.setRowHeight(20);
+                  tablaDatos.setEnabled(false);
+
+                  DefaultTableCellRenderer centrado = new DefaultTableCellRenderer();
+                  centrado.setHorizontalAlignment(SwingConstants.CENTER);
+
+                  for (int i = 0; i < tablaDatos.getColumnCount(); i++) {
+                     tablaDatos.getColumnModel().getColumn(i).setPreferredWidth(250);
+                     tablaDatos.getColumnModel().getColumn(i).setCellRenderer(centrado);
+                  }
+
+                  panelTabla.repaint();
+                  panelTabla.revalidate();
+
+                  break;
+               case "string":
+                  break;
+            }
 
 
 
 
 
-            endTime = System.nanoTime();
+
+
+
             break;
          case "mergeSort":
+            switch (tipo) {
+               case "numerico":
+                  break;
+               case "string":
+                  break;
+            }
             break;
          case "shellSort":
+            switch (tipo) {
+               case "numerico":
+                  break;
+               case "string":
+                  break;
+            }
             break;
          case "seleccion":
+            switch (tipo) {
+               case "numerico":
+                  break;
+               case "string":
+                  break;
+            }
             break;
          case "radixSort":
+            switch (tipo) {
+               case "numerico":
+                  break;
+               case "string":
+                  break;
+            }
             break;
          case "sort":
+            switch (tipo) {
+               case "numerico":
+                  break;
+               case "string":
+                  break;
+            }
             break;
          case "parallelSort":
+            switch (tipo) {
+               case "numerico":
+                  break;
+               case "string":
+                  break;
+            }
             break;
       }
       desbloqueoGraficas();
